@@ -6,15 +6,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.miapp.EventoAdapter;
 import com.example.miapp.Evento;
+import com.example.miapp.Utility.General;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import android.widget.Button;
 import android.widget.ImageView;
 
 public class EventoActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private EventoAdapter adapter;
     private List<Evento> listaEventos;
-
+    private ImageView btn_nuevo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +35,8 @@ public class EventoActivity extends AppCompatActivity {
 
         adapter = new EventoAdapter(listaEventos);
         recyclerView.setAdapter(adapter);
+        btn_nuevo = findViewById(R.id.icono_perfil);
+        btn_nuevo.setOnClickListener(v -> General.navigateToActivity(EventoActivity.this,CrearNoticiaActivity.class));
     }
 
     private void cargarEventos() {

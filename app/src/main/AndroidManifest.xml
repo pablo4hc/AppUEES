@@ -45,7 +45,8 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".ImagenExpandidaActivity"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-
+        <activity android:name=".CrearNoticiaActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 </manifest>
 

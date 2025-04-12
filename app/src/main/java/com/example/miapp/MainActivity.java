@@ -8,6 +8,9 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.example.miapp.Utility.BaseDeDatosHelper;
+import com.example.miapp.models.PublicacionCabecera;
 import com.google.android.material.navigation.NavigationView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MenuAdapter adapter;
     private List<MenuItemModel> menuItems; // Usar la variable de instancia
-
+    private BaseDeDatosHelper dbHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,5 +143,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         recyclerView.setAdapter(adapter);
+        dbHelper = new BaseDeDatosHelper(this);
     }
 }
