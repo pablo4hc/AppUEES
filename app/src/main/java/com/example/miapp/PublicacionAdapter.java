@@ -2,6 +2,7 @@ package com.example.miapp;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,6 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.miapp.Utility.General;
+
 import java.util.List;
 
 public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.ViewHolder> {
@@ -37,7 +41,13 @@ public class PublicacionAdapter extends RecyclerView.Adapter<PublicacionAdapter.
         holder.txtNombre.setText(publicacion.getNombre());
         holder.txtPublicacion.setText(publicacion.getTextoPublicacion());
         holder.imgPerfil.setImageResource(publicacion.getImagenPerfil());
-        holder.imgPublicacion.setImageResource(publicacion.getImagenPublicacion());
+        if(publicacion.getEs_sqlite()==1){
+            Bitmap bitmap = General.base64ToBitmap(publicacion.getImagenPublicacion_base64().replaceAll("^\\[|\\]$", ""));
+            // Mostrar imagen
+            holder.imgPublicacion.setImageBitmap(bitmap);
+        }else{
+            holder.imgPublicacion.setImageResource(publicacion.getImagenPublicacion());
+        }
 
         // Opciones "Comentar" y "Agendar"
         holder.txtAgendar.setText("Agendar");

@@ -1,11 +1,13 @@
 package com.example.miapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,8 +28,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.miapp.Adapter.AdapterFotoPublicacion;
 import com.example.miapp.Utility.BaseDeDatosHelper;
+import com.example.miapp.Utility.General;
 import com.example.miapp.models.PublicacionCabecera;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,18 +63,34 @@ public class CrearNoticiaActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rc_fotos);
         btn_publicar = findViewById(R.id.btn_publicar);
         txt_publicacion = findViewById(R.id.txt_publicacion);
+        ImageView btnRegresar = findViewById(R.id.btn_regresar);
+        btnRegresar.setOnClickListener(v -> {
+            finish();
+            General.navigateToActivity(this,PublicacionesActivity.class);
+        });
         btn_publicar.setOnClickListener(view -> {
             String descripcion=txt_publicacion.getText().toString();
             if(descripcion.equals("")){
                 Toast.makeText(this, "Debe ingresar una idea", Toast.LENGTH_LONG).show();
                 return;
             }
-            dbHelper.insertarPublicacion(new PublicacionCabecera(1,1,1,"",0,"","","","",""));
-            dbHelper.insertarPublicacionDetalle(1,imagenes_list);
+            grabarPublicacion(descripcion);
 
         });
         dbHelper = new BaseDeDatosHelper(this);
-
+    }
+    public void grabarPublicacion(String descripcion){
+        try {
+            Integer id_publicacion=dbHelper.insertarPublicacion(new PublicacionCabecera(1,1,1,descripcion,0,"","","","",""));
+            if(imagenes_list.size()>0){
+                dbHelper.insertarPublicacionDetalle(id_publicacion,1,convertUrisToBase64(this,imagenes_list));
+            }
+            finish();
+            General.navigateToActivity(this,PublicacionesActivity.class);
+            Toast.makeText(this, "Se compartio tu publicación", Toast.LENGTH_LONG).show();
+        }catch (Exception ex){
+            Toast.makeText(this, "Error "+ex, Toast.LENGTH_LONG).show();
+        }
     }
     private static final int PICK_IMAGE_REQUEST = 1;  // Código para la selección de la imagen
     private static final int REQUEST_PERMISSION = 100;
@@ -131,6 +153,34 @@ public class CrearNoticiaActivity extends AppCompatActivity {
                     Toast.makeText(this, "No se seleccionaron imágenes", Toast.LENGTH_SHORT).show();
                 }
             });
+    public static List<String> convertUrisToBase64(Context context, ArrayList<Uri> uriList) {
+        List<String> base64List = new ArrayList<>();
+
+        for (Uri uri : uriList) {
+            try {
+                InputStream inputStream = context.getContentResolver().openInputStream(uri);
+                byte[] bytes = getBytesFromInputStream(inputStream);
+                String base64 = Base64.encodeToString(bytes, Base64.DEFAULT); // NO_WRAP para que no meta saltos de línea
+                base64List.add(base64);
+            } catch (Exception e) {
+                e.printStackTrace();
+                base64List.add(null); // o puedes manejarlo como prefieras
+            }
+        }
+        return base64List;
+    }
+    // Leer InputStream a byte[]
+    private static byte[] getBytesFromInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
     //@Override
    /* protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

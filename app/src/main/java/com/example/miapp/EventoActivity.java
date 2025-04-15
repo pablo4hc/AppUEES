@@ -36,7 +36,7 @@ public class EventoActivity extends AppCompatActivity {
         adapter = new EventoAdapter(listaEventos);
         recyclerView.setAdapter(adapter);
         btn_nuevo = findViewById(R.id.icono_perfil);
-        btn_nuevo.setOnClickListener(v -> General.navigateToActivity(EventoActivity.this,CrearNoticiaActivity.class));
+
     }
 
     private void cargarEventos() {

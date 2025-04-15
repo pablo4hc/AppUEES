@@ -1,6 +1,9 @@
 package com.example.miapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,6 +12,11 @@ import android.widget.PopupMenu;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.miapp.Utility.BaseDeDatosHelper;
+import com.example.miapp.Utility.General;
+import com.example.miapp.models.PublicacionCabecera;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +25,7 @@ public class PublicacionesActivity extends AppCompatActivity {
     private PublicacionAdapter adapter;
     private List<Publicacion> listaPublicaciones;
     private List<Publicacion> listaCompletaPublicaciones; // Guarda todas las publicaciones
-
+    private BaseDeDatosHelper dbHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +33,7 @@ public class PublicacionesActivity extends AppCompatActivity {
 
         ImageView btnRegresar = findViewById(R.id.btn_regresar);
         btnRegresar.setOnClickListener(v -> finish());
-
+        dbHelper = new BaseDeDatosHelper(this);
         // Inicializa RecyclerView
         recyclerView = findViewById(R.id.recyclerViewPublicaciones);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -55,6 +63,11 @@ public class PublicacionesActivity extends AppCompatActivity {
             // Muestra solo algunas publicaciones
             filtrarPublicaciones(false);
         });
+        ImageView btn_publicacion = findViewById(R.id.icono_crear_publicacion);
+        btn_publicacion.setOnClickListener(v -> {
+            finish();
+            General.navigateToActivity(this,CrearNoticiaActivity.class);
+        });
     }
 
     private void mostrarMenuPerfil(View v) {
@@ -80,6 +93,24 @@ public class PublicacionesActivity extends AppCompatActivity {
     }
 
     private void cargarPublicaciones() {
+        List<PublicacionCabecera>cabecera_publicacion= dbHelper.obtenerPublicacionCabecera(1);
+        List<PublicacionCabecera.PublicacionDetalle>detalle_publicacion= dbHelper.obtenerPublicacionDetalle(1);
+        String imagen_detalle="";
+        for(int i=0;i<cabecera_publicacion.size();i++){
+            if(detalle_publicacion.size()>0){
+                for(PublicacionCabecera.PublicacionDetalle d:detalle_publicacion){
+                    if(d.getId_publicacion()==cabecera_publicacion.get(i).getId_publicacion()){
+                        imagen_detalle=d.getImagen_documento();
+                        break;
+                    }
+                }
+            }
+            listaCompletaPublicaciones
+                    .add(new Publicacion("Facultad de Derecho, Política y Desarrollo",
+                            cabecera_publicacion.get(i).getDescripcion(),
+                            //"Este mes sera el inicio del curso tan esperado, puedes registrarte desde ahora. \nFecha: 16/03/2025 \nHora: 17:00h - 19:00",
+                            R.drawable.perfilfacultad, imagen_detalle,1));
+        }
         listaCompletaPublicaciones
                 .add(new Publicacion("Facultad de Derecho, Política y Desarrollo",
                         "Este mes sera el inicio del curso tan esperado, puedes registrarte desde ahora. \nFecha: 16/03/2025 \nHora: 17:00h - 19:00",
@@ -126,5 +157,9 @@ public class PublicacionesActivity extends AppCompatActivity {
                         "Fecha: 01/04/2025 \n" + //
                         "Hora: 10:00h - 12:00h",
                 R.drawable.perfilfacultad, R.drawable.publi7));
+
+
     }
+    // Decodificar Base64 a Bitmap
+
 }

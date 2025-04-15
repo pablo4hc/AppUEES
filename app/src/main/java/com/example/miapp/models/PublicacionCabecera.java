@@ -143,11 +143,24 @@ public class PublicacionCabecera {
     public static class PublicacionDetalle{
         public int id_publicacion;
         public int secuencial;
+        public int id_empresa;
         public String imagen_documento;
 
-        public PublicacionDetalle(int id_publicacion, int secuencial, String imagen_documento) {
+        public int getId_empresa() {
+            return id_empresa;
+        }
+
+        public void setId_empresa(int id_empresa) {
+            this.id_empresa = id_empresa;
+        }
+
+        public PublicacionDetalle() {
+        }
+
+        public PublicacionDetalle(int id_publicacion, int id_empresa, int secuencial, String imagen_documento) {
             this.id_publicacion = id_publicacion;
             this.secuencial = secuencial;
+            this.id_empresa=id_empresa;
             this.imagen_documento = imagen_documento;
         }
 
